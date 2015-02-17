@@ -81,7 +81,7 @@ class FacebookHelper
      * @param array $data :: The list of data needed
      * @return array $user_data :: Returns an associative array with the user's data
      */
-    public function GetUserData($data = array())
+    public function GetUserData(array $data = null)
     {
         //Request the user data
         $request = new FacebookRequest($_SESSION['fb_session_redirect'], 'GET', '/me');
@@ -89,17 +89,34 @@ class FacebookHelper
 
         //Fetch the response
         $graphObject = $response->getGraphObject();
-        $user_data = array();
-        $data_count = count($data);
-        for ($i = 0; $i < $data_count; $i++)
-        {
-            $info = $graphObject->getProperty($data[$i]);
-            if ($info) {
-                $user_data[$data[$i]] = $info;
+        if ($data) {
+            $user_data = array();
+            $data_count = count($data);
+            for ($i = 0; $i < $data_count; $i++) {
+                $info = $graphObject->getProperty($data[$i]);
+                if ($info) {
+                    $user_data[$data[$i]] = $info;
+                }
             }
+            return $user_data;
         }
+        $user_data = $this->GetAllUserData($graphObject);
 
         return $user_data;
+    }
+
+    private function GetAllUserData($graphObject)
+    {
+        $keys = $graphObject->getPropertyNames();
+        $key_count = count($keys);
+        $data = [];
+        for ($i = 0; $i < $key_count; $i++) {
+            $info = $graphObject->getProperty($keys[$i]);
+            if ($info) {
+                $data[$keys[$i]] = $info;
+            }
+        }
+        return $data;
     }
 
     /*

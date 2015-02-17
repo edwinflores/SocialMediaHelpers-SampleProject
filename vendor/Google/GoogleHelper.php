@@ -57,7 +57,7 @@ class GoogleHelper
         if (isset($_GET['code'])) {
             $client->authenticate(Param::get('code'));
             $_SESSION['gACCESSTOKEN'] = $client->getAccessToken();
-            header('Location: ' . APP_URL_LOCAL . '/user/google_login');
+            header('Location: ' . $this->redirect_url);
         }
 
         // Set access token to make request
